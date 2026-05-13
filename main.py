@@ -1,4 +1,7 @@
 from git import Repo
+from rich.console import Console
+from rich.panel import Panel
+from rich.syntax import Syntax
 
 def extract_diff(repo_path):
     repo = Repo(repo_path)
@@ -54,10 +57,38 @@ DIFF_END
 Return a code review of the above diff.
 """
 
+console = Console()
+
+def render(result):
+    console.rule("AI Code Review")
+
+    # Summary
+    console.print(Panel(result["summary"], title="Summary", style="cyan"))
+
+    # Risks
+    if result["risks"]:
+        console.print("\n[bold yellow]Risks[/bold yellow]")
+        for r in result["risks"]:
+            console.print(f"• {r}")
+
+    # Suggestions
+    if result["suggestions"]:
+        console.print("\n[bold green]Suggestions[/bold green]")
+        for s in result["suggestions"]:
+            console.print(f"• {s}")
+
+    # Patch
+    patch = result.get("patch")
+    if patch:
+        console.print("\n[bold blue]Proposed Patch[/bold blue]")
+        console.print(Syntax(patch, "diff", theme="monokai"))
+    else:
+        console.print("\n[bold blue]No patch suggested[/bold blue]")
+
 if __name__ == "__main__":
     repo_path = "."
     diff = extract_diff(repo_path)
     prompt = build_prompt(diff)
     result = run_mock_model(prompt)
-    print(result)
+    render(result)
 
