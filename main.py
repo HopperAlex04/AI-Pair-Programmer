@@ -3,6 +3,12 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.syntax import Syntax
 import providers
+import argparse
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="AI Code Review")
+    parser.add_argument("--model", type=str, required=False, default = "mock", help="Model to use")
+    return parser.parse_args()
 
 def extract_diff(repo_path):
     repo = Repo(repo_path)
@@ -50,12 +56,16 @@ def render(result):
 MAX_DIFF_LENGTH = 10000
 
 if __name__ == "__main__":
+    args = parse_args()
     repo_path = "."
     diff = extract_diff(repo_path)
     if len(diff) > MAX_DIFF_LENGTH:
         diff = diff[:MAX_DIFF_LENGTH]
     prompt = build_prompt(diff)
-    provider = providers.OpenRouterProvider()
+    if args.model == "mock":
+        provider = providers.MockProvider()
+    else:
+        provider = providers.OpenRouterProvider(args.model)
     result = provider.generate(prompt)
     render(result)
 
