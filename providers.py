@@ -1,6 +1,10 @@
+from ollama import chat
+
 import os
 import json
 import requests
+
+
 
 SYSTEM_PROMPT = """
 You are an automated code review system.
@@ -112,3 +116,29 @@ class OpenRouterProvider:
         if missing:
             raise ValueError(f"Missing keys: {missing}")
         return json.loads(cleaned)
+
+class OllamaLocalProvider:
+    def __init__(self, model: str = "qwen2.5:7b"):
+        self.model = model
+
+    def generate(self, prompt: str):
+        response = chat(
+            model=self.model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": SYSTEM_PROMPT
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            stream=False,
+            options={"temperature": 0.2}
+        )
+
+        content = response["message"]["content"]
+
+        # Parse JSON (will raise if model breaks format)
+        return json.loads(content)

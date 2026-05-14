@@ -2,12 +2,15 @@ from git import Repo
 from rich.console import Console
 from rich.panel import Panel
 from rich.syntax import Syntax
+
 import providers
 import argparse
 
 def parse_args():
     parser = argparse.ArgumentParser(description="AI Code Review")
     parser.add_argument("--model", type=str, required=False, default = "mock", help="Model to use")
+    parser.add_argument("--local", action="store_true", required=False, default=False, help="Use local model through Ollama")
+    parser.add_argument("--provider", type=str, required=False, default="openrouter", help="Provider to use (Will be ignored if --local is True)")
     return parser.parse_args()
 
 def extract_diff(repo_path):
@@ -64,6 +67,8 @@ if __name__ == "__main__":
     prompt = build_prompt(diff)
     if args.model == "mock":
         provider = providers.MockProvider()
+    elif args.local:
+        provider = providers.OllamaLocalProvider(args.model)
     else:
         provider = providers.OpenRouterProvider(args.model)
     result = provider.generate(prompt)
