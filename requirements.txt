@@ -1,0 +1,4 @@
+GitPython>=3.1.30
+rich>=13.0.0
+ollama>=0.3.0
+requests>=2.28.0
