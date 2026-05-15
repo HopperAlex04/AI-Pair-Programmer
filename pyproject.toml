@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eppy"
+version = "0.1.0"
+description = "Multi-modal way of quickly reviewing what has changed since the latest commit."
+readme = "README.md"
+requires-python = ">=3.11"
+
+dependencies = [
+    "requests",
+    "GitPython",
+    "rich",
+    "ollama",
+]
+
+[project.scripts]
+eppy = "eppy.cli:main"

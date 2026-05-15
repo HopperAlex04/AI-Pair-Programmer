@@ -3,7 +3,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.syntax import Syntax
 
-import providers
+import eppy.providers as providers
 import argparse
 
 def parse_args():
@@ -58,7 +58,7 @@ def render(result):
 
 MAX_DIFF_LENGTH = 10000
 
-if __name__ == "__main__":
+def main():
     args = parse_args()
     repo_path = "."
     diff = extract_diff(repo_path)
